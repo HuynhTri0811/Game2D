@@ -11,6 +11,13 @@ public class PlayerDiChuyen : MonoBehaviour
     private float dirX = 0f;
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float jumForce = 6f;
+
+
+
+    private enum MovemenState { idle,running , jumping,falling }
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,20 +43,39 @@ public class PlayerDiChuyen : MonoBehaviour
         UpdateAnimationUpdate();
 
     }
+
+
     private void UpdateAnimationUpdate()
     {
+
+        MovemenState state;
+
         if (dirX != 0f)
         {
-            _animation.SetBool("Running", true);
-            if(dirX < 0) { 
+            state = MovemenState.running;
+            if (dirX < 0)
+            {
                 _spriteRenderer.flipX = true;
             }
-            else {
+            else
+            {
                 _spriteRenderer.flipX = false;
             }
         }
         else
-            _animation.SetBool("Running", false);
+            state = MovemenState.idle;
 
+
+
+        if(rp.velocity.y > .1f)
+        {
+            Debug.Log(rp.velocity.y);
+            state = MovemenState.jumping;
+        }
+        else if(rp.velocity.y < -.1f)
+        {
+            state = MovemenState.falling;
+        }
+        _animation.SetInteger("state",(int)state);
     }
 }
